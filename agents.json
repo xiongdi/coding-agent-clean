@@ -26,16 +26,37 @@
         "mcps",
         "hooks"
       ],
-      "notes": "Richest artifact surface of any agent. ~/.claude is the state root (%USERPROFILE%\\.claude on Windows).",
+      "notes": "Richest artifact surface of any agent. ~/.claude is the state root (%USERPROFILE%\\.claude on Windows). Marketplace state lives under plugins/marketplaces/ + plugins/plugin-catalog-cache.json + plugins/known_marketplaces.json. NOTE: deleting ~/.claude entirely does NOT permanently remove the marketplace — Claude Code auto-reinstalls the official marketplace on next startup via the officialMarketplaceAutoInstalled flag. To fully reset marketplace state, also clean plugins/* and cache/* and strip marketplace entries from settings.json (extraKnownMarketplaces, enabledPlugins).",
       "paths": {
         "windows": [
-          "%USERPROFILE%\\.claude"
+          "%USERPROFILE%\\.claude",
+          "%USERPROFILE%\\.claude.json"
         ],
         "macos": [
           "~/.claude"
         ],
         "linux": [
           "~/.claude"
+        ]
+      },
+      "marketplace_paths": {
+        "windows": [
+          "%USERPROFILE%\\.claude\\plugins\\marketplaces",
+          "%USERPROFILE%\\.claude\\plugins\\plugin-catalog-cache.json",
+          "%USERPROFILE%\\.claude\\plugins\\known_marketplaces.json",
+          "%USERPROFILE%\\.claude\\cache"
+        ],
+        "macos": [
+          "~/.claude/plugins/marketplaces",
+          "~/.claude/plugins/plugin-catalog-cache.json",
+          "~/.claude/plugins/known_marketplaces.json",
+          "~/.claude/cache"
+        ],
+        "linux": [
+          "~/.claude/plugins/marketplaces",
+          "~/.claude/plugins/plugin-catalog-cache.json",
+          "~/.claude/plugins/known_marketplaces.json",
+          "~/.claude/cache"
         ]
       },
       "project_local": [
