@@ -39,26 +39,6 @@
           "~/.claude"
         ]
       },
-      "marketplace_paths": {
-        "windows": [
-          "%USERPROFILE%\\.claude\\plugins\\marketplaces",
-          "%USERPROFILE%\\.claude\\plugins\\plugin-catalog-cache.json",
-          "%USERPROFILE%\\.claude\\plugins\\known_marketplaces.json",
-          "%USERPROFILE%\\.claude\\cache"
-        ],
-        "macos": [
-          "~/.claude/plugins/marketplaces",
-          "~/.claude/plugins/plugin-catalog-cache.json",
-          "~/.claude/plugins/known_marketplaces.json",
-          "~/.claude/cache"
-        ],
-        "linux": [
-          "~/.claude/plugins/marketplaces",
-          "~/.claude/plugins/plugin-catalog-cache.json",
-          "~/.claude/plugins/known_marketplaces.json",
-          "~/.claude/cache"
-        ]
-      },
       "project_local": [
         {
           "path": ".claude",

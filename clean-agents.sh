@@ -12,10 +12,6 @@
 #   ./clean-agents.sh --backup --apply        # backup then wipe
 #   ./clean-agents.sh --agents claude-code,cursor --apply
 #   ./clean-agents.sh --include-project-local --project-roots ~/workspace --apply
-#
-# NOTE: a --marketplaces flag is NOT implemented. Deleting ~/.claude works once,
-# but Claude Code auto-reinstalls the official marketplace on next startup
-# (officialMarketplaceAutoInstalled). See agents.json claude-code notes.
 
 set -euo pipefail
 
@@ -27,18 +23,21 @@ AGENTS=""
 CLOUD_TOO=0
 INCLUDE_PROJECT_LOCAL=0
 PROJECT_ROOTS=()
-JSON_PATH=""
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-[[ -z "$JSON_PATH" ]] && JSON_PATH="$SCRIPT_DIR/agents.json"
+JSON_PATH="$SCRIPT_DIR/agents.json"
 
 # --- parse args ---
+declare -A WANTED=()
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --apply) APPLY=1 ;;
         --backup) BACKUP=1 ;;
         --backup-dir) BACKUP_DIR="$2"; shift ;;
-        --agents) AGENTS="$2"; shift ;;
+        --agents)
+            IFS=',' read -ra _tmp <<< "$2"
+            for a in "${_tmp[@]}"; do WANTED["$(echo "$a" | xargs)"]=1; done
+            shift ;;
         --cloud-too) CLOUD_TOO=1 ;;
         --include-project-local) INCLUDE_PROJECT_LOCAL=1 ;;
         --project-roots)
@@ -50,7 +49,7 @@ while [[ $# -gt 0 ]]; do
             continue ;;
         --json) JSON_PATH="$2"; shift ;;
         -h|--help)
-            sed -n '2,20p' "$0" | sed 's/^# \?//'; exit 0 ;;
+            sed -n '2,18{s/^# \?//;p;}' "$0"; exit 0 ;;
         *) echo "Unknown option: $1" >&2; exit 1 ;;
     esac
     shift
@@ -72,12 +71,18 @@ if ! command -v jq &>/dev/null; then
 fi
 
 # --- helpers ---
-# expand ~, %USERPROFILE% (Windows), $HOME, $XDG_* etc. in a path template
+# expand ~, %VAR% (Windows), $HOME, $XDG_* etc. in a path template
 expand_path() {
     local s="$1"
-    # Windows %VAR% env-var syntax (must run before the $HOME substitution,
-    # and before ~ since %USERPROFILE% is a full path, not relative to HOME)
-    s="${s//\%USERPROFILE\%/${USERPROFILE:-$HOME}}"
+    # Windows %VAR% env-var syntax (must run before ~ since %VAR% is a full path)
+    if [[ "$s" == *'%'*'%'* ]]; then
+        local var val
+        while [[ "$s" =~ %([A-Za-z_][A-Za-z0-9_]*)% ]]; do
+            var="${BASH_REMATCH[1]}"
+            val="${!var:-}"
+            s="${s//\%${var}\%/$val}"
+        done
+    fi
     s="${s/#\~/$HOME}"
     s="${s/\$HOME/$HOME}"
     # XDG fallbacks
@@ -90,21 +95,17 @@ expand_path() {
 
 # glob-aware existence: prints matching paths (one per line), honors wildcards
 find_paths() {
-    local template="$1"
     local s
-    s="$(expand_path "$template")"
+    s="$(expand_path "$1")"
 
-    local parent leaf
-    parent="$(dirname "$s")"
-    leaf="$(basename "$s")"
-
-    # wildcard in leaf?
-    if [[ "$leaf" == *'*'* || "$leaf" == *'?'* || "$leaf" == *'['* ]]; then
-        [[ -d "$parent" ]] || return 0
+    if [[ "$s" == *'*'* || "$s" == *'?'* || "$s" == *'['* ]]; then
+        # wildcard: let bash expand it
+        shopt -s nullglob
         local p
-        for p in "$parent"/$leaf; do
+        for p in $s; do
             [[ -e "$p" ]] && echo "$p"
         done
+        shopt -u nullglob
     else
         [[ -e "$s" ]] && echo "$s"
     fi
@@ -172,34 +173,18 @@ remove_state() {
     done
 }
 
-# --- build agent list ---
-agent_count() { jq '.agents | length' "$JSON_PATH"; }
-agent_at()   { jq -r --argjson i "$1" '.agents[$i]' "$JSON_PATH"; }
-
-N="$(agent_count)"
+# --- main loop: single jq pass emits TSV per agent ---
 SUMMARY=()
 GRAND_FOUND=0
 GRAND_REMOVED=0
 
-for (( i=0; i<N; i++ )); do
-    row="$(agent_at "$i")"
-    # one jq call instead of five
-    IFS=$'\t' read -r id name is_cloud notes cats <<< "$(echo "$row" | jq -r '[.id, .name, .cloud_only, (.notes // ""), (if .categories then .categories | join(", ") else "(none)" end)] | @tsv')"
-
+while IFS=$'\t' read -r id name is_cloud notes cats paths_json project_local_json; do
     # filter by --agents
-    if [[ -n "$AGENTS" ]]; then
-        found=0
-        IFS=',' read -ra WANTED <<< "$AGENTS"
-        for w in "${WANTED[@]}"; do
-            w="$(echo "$w" | xargs)"
-            [[ "$w" == "$id" ]] && found=1 && break
-        done
-        if [[ $found -eq 0 ]]; then continue; fi
-    fi
+    if [[ ${#WANTED[@]} -gt 0 && -z "${WANTED[$id]+x}" ]]; then continue; fi
 
     if [[ "$is_cloud" == "true" ]]; then
         if [[ $CLOUD_TOO -eq 1 ]]; then
-            SUMMARY+=("$name|$id|cloud-only (no local state)")
+            SUMMARY+=("$name"$'\t'"$id"$'\t'"cloud-only (no local state)")
         fi
         continue
     fi
@@ -208,7 +193,6 @@ for (( i=0; i<N; i++ )); do
     echo "  id: $id   categories: $cats"
     [[ -n "$notes" ]] && echo "  note: $notes"
 
-    field="$(platform_paths_field)"
     found_paths=()
 
     # global paths
@@ -217,7 +201,7 @@ for (( i=0; i<N; i++ )); do
         while IFS= read -r resolved; do
             [[ -n "$resolved" ]] && found_paths+=("$resolved")
         done < <(find_paths "$tpl")
-    done < <(echo "$row" | jq -r ".paths.$field[]?")
+    done < <(echo "$paths_json" | jq -r '.[]?')
 
     # project-local paths
     if [[ $INCLUDE_PROJECT_LOCAL -eq 1 ]]; then
@@ -228,7 +212,7 @@ for (( i=0; i<N; i++ )); do
                     [[ -n "$resolved" ]] && found_paths+=("$resolved")
                 done < <(find_paths "$root/$ptpl")
             done
-        done < <(echo "$row" | jq -r '.project_local[]?.path?')
+        done < <(echo "$project_local_json" | jq -r '.[]')
     fi
 
     # de-duplicate
@@ -238,7 +222,7 @@ for (( i=0; i<N; i++ )); do
 
     if [[ ${#found_paths[@]} -eq 0 ]]; then
         echo "  -> not found on this machine"
-        SUMMARY+=("$name|$id|not found")
+        SUMMARY+=("$name"$'\t'"$id"$'\t'"not found")
         echo
         continue
     fi
@@ -251,9 +235,19 @@ for (( i=0; i<N; i++ )); do
         remove_state "$id" "${found_paths[@]}"
         GRAND_REMOVED=$((GRAND_REMOVED + ${#found_paths[@]}))
     fi
-    SUMMARY+=("$name|$id|found ${#found_paths[@]}")
+    SUMMARY+=("$name"$'\t'"$id"$'\t'"found ${#found_paths[@]}")
     echo
-done
+done < <(jq -r --arg plat "$plat" '
+  .agents[] | [
+    .id,
+    .name,
+    .cloud_only,
+    (.notes // ""),
+    (if .categories then .categories | join(", ") else "(none)" end),
+    (.paths[$plat] | @json),
+    ((.project_local // []) | @json)
+  ] | @tsv
+' "$JSON_PATH")
 
 # --- summary ---
 echo '========================================='
@@ -262,7 +256,7 @@ echo '========================================='
 printf '%-22s %-16s %s\n' AGENT ID STATUS
 printf '%-22s %-16s %s\n' '----' '--' '------'
 for s in "${SUMMARY[@]}"; do
-    IFS='|' read -r nm st <<< "$s"
+    IFS=$'\t' read -r nm st <<< "$s"
     printf '%-22s %-16s %s\n' "$nm" "$st"
 done
 echo
