@@ -26,7 +26,7 @@
         "mcps",
         "hooks"
       ],
-      "notes": "Richest artifact surface of any agent. ~/.claude is the state root; override with CLAUDE_CONFIG_DIR.",
+      "notes": "Richest artifact surface of any agent. ~/.claude is the state root (%USERPROFILE%\\.claude on Windows).",
       "paths": {
         "windows": [
           "%USERPROFILE%\\.claude"
@@ -77,10 +77,13 @@
       "cloud_only": false,
       "categories": [
         "plugins",
+        "rules",
         "skills",
+        "subagents",
         "tools",
         "mcps",
-        "hooks"
+        "hooks",
+        "memory"
       ],
       "notes": "State root is $CODEX_HOME. Default: ~/.codex on ALL platforms (confirmed via dirs::home_dir() + '.codex'); Windows install.ps1 defaults to %USERPROFILE%\\.codex. Has skills, plugins, tools, hooks, mcps, memory. No distinct rules/subagents storage categories (subagents are a runtime feature; rules conflated with skills/hooks). Auth: $CODEX_HOME/auth.json (file-based default; keyring/auto/ephemeral modes exist). Project root detected via .git marker (NOT a .codex/ folder). Do NOT wipe packages/standalone/ (install root).",
       "paths": {
@@ -94,7 +97,20 @@
           "~/.codex"
         ]
       },
-      "project_local": []
+      "project_local": [
+        {
+          "path": ".codex/config.toml",
+          "artifacts": [
+            "config"
+          ]
+        },
+        {
+          "path": "AGENTS.md",
+          "artifacts": [
+            "rules"
+          ]
+        }
+      ]
     },
     {
       "id": "gemini-cli",
@@ -103,9 +119,14 @@
       "type": "cli",
       "cloud_only": false,
       "categories": [
-        "mcps"
+        "mcps",
+        "skills",
+        "hooks",
+        "memory",
+        "tools",
+        "rules"
       ],
-      "notes": "State root is ~/.gemini (override with $GEMINI_CLI_HOME). Extensions registry-based.",
+      "notes": "State root is ~/.gemini. Extensions registry-based. Skills (skills.enabled), hooks (hooksConfig), memory (experimental.autoMemory), tools, rules (GEMINI.md).",
       "paths": {
         "windows": [
           "%USERPROFILE%\\.gemini"
@@ -129,22 +150,24 @@
     {
       "id": "goose",
       "name": "Goose",
-      "publisher": "Block",
+      "publisher": "Agentic AI Foundation (AAIF) at Linux Foundation",
       "type": "cli",
       "cloud_only": false,
       "categories": [
-        "plugins",
-        "tools"
+        "tools",
+        "subagents",
+        "mcps",
+        "skills",
+        "memory"
       ],
-      "notes": "Extensions in config.yaml; recipes are tools. Auth defaults to system keyring, secrets.yaml is fallback only.",
+      "notes": "Open-source dev agent. Config: ~/.config/goose/config.yaml (Linux), ~/Library/Application Support/Block/goose (macOS), %APPDATA%\\Block\\goose (Windows). Extensions are the plugin-equivalent. Override: GOOSE_PATH_ROOT.",
       "paths": {
         "windows": [
           "%APPDATA%\\Block\\goose",
           "%LOCALAPPDATA%\\Block\\goose"
         ],
         "macos": [
-          "~/Library/Application Support/Goose",
-          "~/Library/Caches/Goose"
+          "~/Library/Application Support/Block/goose"
         ],
         "linux": [
           "~/.config/goose",
@@ -157,24 +180,28 @@
     {
       "id": "opencode",
       "name": "opencode (archived)",
-      "publisher": "SST",
+      "publisher": "Anomaly Co. (anomalyco)",
       "type": "cli",
       "cloud_only": false,
       "categories": [
         "tools",
-        "mcps"
+        "mcps",
+        "plugins",
+        "skills",
+        "rules",
+        "agents",
+        "subagents",
+        "hooks"
       ],
-      "notes": "ARCHIVED — renamed to Crush (charmbracelet/crush), which uses DIFFERENT paths. OpenCode config: ~/.opencode.json, ~/.config/opencode/.opencode.json. Data: .opencode/opencode.db. Commands: ~/.config/opencode/commands/. Auth: ~/.config/github-copilot/ (shared with other tools — caution).",
+      "notes": "CLI-first coding agent (formerly SST, now AnomalyCo). Config: ~/.config/opencode/opencode.json on ALL platforms. Has plugins, skills, agents, subagents, MCPs, hooks, instructions (rules).",
       "paths": {
         "windows": [
-          "%USERPROFILE%\\.opencode.json"
+          "%USERPROFILE%\\.config\\opencode"
         ],
         "macos": [
-          "~/.opencode.json",
           "~/.config/opencode"
         ],
         "linux": [
-          "~/.opencode.json",
           "~/.config/opencode"
         ]
       },
@@ -194,11 +221,14 @@
       "type": "cli",
       "cloud_only": false,
       "categories": [
-        "skills",
         "rules",
-        "mcps"
+        "skills",
+        "tools",
+        "mcps",
+        "hooks",
+        "memory"
       ],
-      "notes": "Successor to opencode (which was archived). Config: .crush.json, crush.json, ~/.config/crush/crush.json. State: ~/.local/share/crush/ (Unix), %LOCALAPPDATA%\\crush\\ (Windows). Skills in ~/.config/crush/skills/, ~/.config/agents/skills/, ~/.claude/skills/. Rules/context: ~/.config/crush/CRUSH.md. Override env: CRUSH_GLOBAL_CONFIG, CRUSH_GLOBAL_DATA, CRUSH_SKILLS_DIR.",
+      "notes": "Terminal agentic coding TUI (successor to opencode). Config: ~/.config/crush. State: ~/.local/share/crush. Auth via config file. Skills, MCPs, hooks, memory (CRUSH.md, AGENTS.md). .crush/ is a LOGS directory (do not treat as config).",
       "paths": {
         "windows": [
           "%USERPROFILE%\\.config\\crush",
@@ -239,12 +269,6 @@
           ]
         },
         {
-          "path": ".crush/logs",
-          "artifacts": [
-            "logs"
-          ]
-        },
-        {
           "path": ".crushignore",
           "artifacts": [
             "config"
@@ -277,9 +301,8 @@
         {
           "path": ".qwen",
           "artifacts": [
-            "skills",
             "config",
-            "memory"
+            "skills"
           ]
         }
       ]
@@ -291,8 +314,7 @@
       "type": "cli",
       "cloud_only": false,
       "categories": [
-        "mcps",
-        "subagents"
+        "mcps"
       ],
       "notes": "State root is ~/.kimi (override with $KIMI_SHARE_DIR). Subagents stored per-session.",
       "paths": {
@@ -315,7 +337,7 @@
       "type": "cli",
       "cloud_only": false,
       "categories": [],
-      "notes": "No global state dir. Everything is repo-local (git root or cwd). No plugins/rules/skills/hooks concept.",
+      "notes": "No global state dir. Reads config from ~/.aider/ (oauth-keys.env, installs.json, .aider.conf.yml, .aider.model.settings.yml). Project-local only otherwise.",
       "paths": {
         "windows": [],
         "macos": [],
@@ -396,7 +418,7 @@
         "skills",
         "subagents"
       ],
-      "notes": "VS Code-fork IDE. Global rules/MCP in ~/.cursor; app data in %APPDATA%/Cursor. Skills and subagents built into Agent mode.",
+      "notes": "VS Code-fork IDE. Global rules/MCP in ~/.cursor; app data in %APPDATA%/Cursor (standard Electron convention). Skills and subagents built into Agent mode.",
       "paths": {
         "windows": [
           "%APPDATA%\\Cursor",
@@ -432,11 +454,12 @@
     {
       "id": "windsurf",
       "name": "Windsurf",
-      "publisher": "Cognition AI",
+      "publisher": "Cognition",
       "type": "ide",
       "cloud_only": false,
       "categories": [
-        "mcps"
+        "mcps",
+        "rules"
       ],
       "notes": "VS Code-fork IDE. Primary config dir is ~/.codeium/windsurf. Being rebranded to Devin Desktop.",
       "paths": {
@@ -465,9 +488,10 @@
       "type": "ide",
       "cloud_only": false,
       "categories": [
-        "plugins"
+        "extensions",
+        "mcps"
       ],
-      "notes": "Custom Rust editor (not VS Code). Extensions are plugins. No native MCP/rules/hooks support.",
+      "notes": "Custom Rust editor (not VS Code). Extensions (not plugins) are the add-on system. Native MCP support. ~/.config/zed, ~/.local/share/zed, ~/.cache/zed (Linux); ~/Library/Application Support/Zed + Caches + Logs (macOS).",
       "paths": {
         "windows": [
           "%APPDATA%\\Zed",
@@ -475,7 +499,8 @@
         ],
         "macos": [
           "~/Library/Application Support/Zed",
-          "~/Library/Caches/Zed"
+          "~/Library/Caches/Zed",
+          "~/Library/Logs/Zed"
         ],
         "linux": [
           "~/.config/zed",
@@ -500,7 +525,7 @@
         "mcps",
         "hooks"
       ],
-      "notes": "VS Code-fork IDE. Confirmed global dirs: ~/.kiro/settings, ~/.kiro/steering, ~/.kiro/skills (POSIX); %USERPROFILE%\\.kiro\\settings (Windows). Has hooks, specs, steering, skills, MCPs, subagents, rules (via AGENTS.md), plugins (Open VSX). Install/cache/auth paths NOT published by official docs.",
+      "notes": "Agentic IDE. Global dirs: ~/.kiro/settings (mcp.json), ~/.kiro/steering, ~/.kiro/skills (POSIX). Binary: kiro-cli. Has hooks, specs, steering, skills, MCPs, subagents, Open VSX extensions.",
       "paths": {
         "windows": [
           "%USERPROFILE%\\.kiro"
@@ -561,9 +586,14 @@
         "mcps",
         "plugins",
         "rules",
-        "sessions"
+        "sessions",
+        "skills",
+        "subagents",
+        "tools",
+        "hooks",
+        "memory"
       ],
-      "notes": "VS Code-fork IDE with Knowledge Engine. Config: ~/.qoder/settings.json + project .qoder/. Data: %APPDATA%\\Qoder + %LOCALAPPDATA%\\Qoder (Win), ~/Library/Application Support/Qoder (macOS), ~/.config/Qoder (Linux). Registry: HKCU\\Software\\Qoder (Windows). Auth: QODER_PERSONAL_ACCESS_TOKEN (non-interactive/CI). No QODER_HOME path override.",
+      "notes": "VS Code-fork IDE with Knowledge Engine. Binary: qodercli. Config: ~/.qoder/settings.json + project .qoder/. Data dirs (%APPDATA%\\Qoder + %LOCALAPPDATA%\\Qoder on Windows, ~/.config/Qoder on Linux) from community reset tools. Auth: QODER_PERSONAL_ACCESS_TOKEN. Registry: HKCU\\Software\\Qoder (Windows).",
       "paths": {
         "windows": [
           "%APPDATA%\\Qoder",
@@ -598,7 +628,7 @@
     {
       "id": "google-antigravity",
       "name": "Google Antigravity",
-      "publisher": "Google",
+      "publisher": "Google (unverified)",
       "type": "ide",
       "cloud_only": false,
       "categories": [
@@ -608,7 +638,7 @@
         "mcps",
         "hooks"
       ],
-      "notes": "Standalone agentic IDE + CLI + SDK (antigravity.google.com). Manages multiple local agents in parallel. Auth via OS keyring. CLI binary: ~/.local/bin/agy (Unix), %LOCALAPPDATA%\\agy\\bin (Windows).",
+      "notes": "Standalone agentic IDE + CLI + SDK. Paths ~/.gemini/antigravity* are INFERRED (antigravity.google.com is a login landing page with no technical docs; no public GitHub repo). Verify on your machine before trusting.",
       "paths": {
         "windows": [
           "%USERPROFILE%\\.gemini\\antigravity",
@@ -720,19 +750,18 @@
         "rules",
         "mcps"
       ],
-      "notes": "VS Code extension. Extension ID: saoudrizwan.claude-dev (confirmed current — rebrand to 'Cline' was name-only, publisher ID unchanged). Rules: project .clinerules.",
+      "notes": "Open-source autonomous coding agent (CLI + VS Code + SDK). Global state: ~/.cline/ (data/settings, rules, hooks, skills, agents, plugins, cron) + ~/Documents/Cline/Rules. Binary: cline. Env: CLINE_DATA_DIR. VS Code publisher: saoudrizwan.",
       "paths": {
         "windows": [
-          "%APPDATA%\\Code\\User\\globalStorage\\saoudrizwan.claude-dev",
-          "%USERPROFILE%\\.vscode\\extensions\\saoudrizwan.claude-dev*"
+          "%USERPROFILE%\\.cline",
+          "%USERPROFILE%\\Documents\\Cline"
         ],
         "macos": [
-          "~/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev",
-          "~/.vscode/extensions/saoudrizwan.claude-dev*"
+          "~/Library/Application Support/Cline",
+          "~/Documents/Cline"
         ],
         "linux": [
-          "~/.config/Code/User/globalStorage/saoudrizwan.claude-dev",
-          "~/.vscode/extensions/saoudrizwan.claude-dev*"
+          "~/.cline"
         ]
       },
       "project_local": [
@@ -740,12 +769,6 @@
           "path": ".clinerules",
           "artifacts": [
             "rules"
-          ]
-        },
-        {
-          "path": ".mcp.json",
-          "artifacts": [
-            "mcps"
           ]
         }
       ]
@@ -760,7 +783,7 @@
         "rules",
         "mcps"
       ],
-      "notes": "SHUT DOWN May 15 — no longer installable. Only historically correct ID: RooVeterinaryInc.roo-cline (legacy). Marketplace directs users to ZooCode or Cline.",
+      "notes": "SHUT DOWN May 15 2026 — no longer installable. Repo archived. Only historically correct ID: RooVeterinaryInc.roo-cline. Paths (.roo/) from archived repo. Marketplace directs to ZooCode or Cline.",
       "paths": {
         "windows": [
           "%APPDATA%\\Code\\User\\globalStorage\\RooVeterinaryInc.roo-cline",
@@ -805,7 +828,7 @@
     {
       "id": "continue",
       "name": "Continue",
-      "publisher": "Continue",
+      "publisher": "Continue Dev, Inc.",
       "type": "extension",
       "cloud_only": false,
       "categories": [
@@ -815,7 +838,7 @@
         "mcps",
         "hooks"
       ],
-      "notes": "VS Code extension. Extension ID: Continue.continue. Global config: ~/.continue/ (config.yaml primary, config.json legacy, sessions/, index/ with SQLite, skills/, prompts/, logs/, dev_data/ telemetry). API keys stored PLAINTEXT in config.yaml/config.json. Project config in .continue/ (rules/, skills/, agents/, mcpServers/, prompts/). Also uses VS Code globalStorageUri for encrypted secrets.",
+      "notes": "Open-source IDE extension (VS Code/JetBrains) + CLI. Binary: cn. Global config: ~/.continue/ (config.yaml, sessions/, index/ SQLite, skills/, prompts/, logs/). Env: CONTINUE_GLOBAL_DIR. API keys stored PLAINTEXT. Project config in .continue/.",
       "paths": {
         "windows": [
           "%USERPROFILE%\\.continue",
@@ -860,7 +883,7 @@
       "type": "extension",
       "cloud_only": false,
       "categories": [],
-      "notes": "VS Code extension. Extension IDs: GitHub.copilot, GitHub.copilot-chat. Auth via OS credential manager (not plaintext).",
+      "notes": "VS Code extension. Extension IDs: GitHub.copilot, GitHub.copilot-chat. Auth storage NOT documented in official sources (delegates to bundled copilot-language-server). No global state dir confirmed.",
       "paths": {
         "windows": [
           "%APPDATA%\\Code\\User\\globalStorage\\GitHub.copilot",
@@ -889,23 +912,38 @@
       "publisher": "Amazon",
       "type": "extension",
       "cloud_only": false,
-      "categories": [],
-      "notes": "VS Code extension. Extension ID: AmazonWebServices.amazon-q-vscode. Auth via OS credential manager.",
+      "categories": [
+        "agents",
+        "prompts",
+        "mcps",
+        "subagents",
+        "rules"
+      ],
+      "notes": "AWS coding assistant (VS Code/JetBrains + CLI). Global state: ~/.aws/amazonq/ (cli-agents/, prompts/, mcp.json, global_context.json, profiles/, knowledge_bases/). Project-local: .amazonq/. NOT cloud-only.",
       "paths": {
         "windows": [
-          "%APPDATA%\\Code\\User\\globalStorage\\AmazonWebServices.amazon-q-vscode",
-          "%USERPROFILE%\\.vscode\\extensions\\AmazonWebServices.amazon-q-vscode*"
+          "%USERPROFILE%\\.aws\\amazonq"
         ],
         "macos": [
-          "~/Library/Application Support/Code/User/globalStorage/AmazonWebServices.amazon-q-vscode",
-          "~/.vscode/extensions/AmazonWebServices.amazon-q-vscode*"
+          "~/.aws/amazonq"
         ],
         "linux": [
-          "~/.config/Code/User/globalStorage/AmazonWebServices.amazon-q-vscode",
-          "~/.vscode/extensions/AmazonWebServices.amazon-q-vscode*"
+          "~/.aws/amazonq"
         ]
       },
-      "project_local": []
+      "project_local": [
+        {
+          "path": ".amazonq",
+          "artifacts": [
+            "agents",
+            "prompts",
+            "mcps",
+            "subagents",
+            "rules",
+            "config"
+          ]
+        }
+      ]
     },
     {
       "id": "gemini-code-assist",
@@ -913,8 +951,10 @@
       "publisher": "Google",
       "type": "extension",
       "cloud_only": false,
-      "categories": [],
-      "notes": "VS Code extension. Extension ID: Google.geminiCodeAssist (confirmed). Also reads ~/.config/gcloud for Google Cloud auth.",
+      "categories": [
+        "mcps"
+      ],
+      "notes": "VS Code extension. Extension ID: Google.geminiCodeAssist. Supports MCP servers. No agent-owned global state dir. Auth via gcloud ADC or gemini-code-assist CLI (does NOT read ~/.config/gcloud — that is gcloud's own dir).",
       "paths": {
         "windows": [
           "%APPDATA%\\Code\\User\\globalStorage\\Google.geminiCodeAssist",
@@ -941,7 +981,7 @@
       "type": "extension",
       "cloud_only": false,
       "categories": [],
-      "notes": "VS Code extension. Extension ID: augment.vscode-augment (confirmed).",
+      "notes": "VS Code extension. Extension ID: augment.vuggestcode-augment. CLI: auggie. No global state dir documented. Token storage location not published.",
       "paths": {
         "windows": [
           "%APPDATA%\\Code\\User\\globalStorage\\augment.vscode-augment",
@@ -961,23 +1001,31 @@
     {
       "id": "amp",
       "name": "Amp",
-      "publisher": "Sourcegraph",
+      "publisher": "Ampcode Inc.",
       "type": "extension",
       "cloud_only": false,
-      "categories": [],
-      "notes": "VS Code extension. Extension ID: sourcegraph.amp.",
+      "categories": [
+        "mcps",
+        "tools",
+        "skills",
+        "rules"
+      ],
+      "notes": "Agent-first coding tool. Global: ~/.config/amp/settings.json (all platforms), ~/.amp/oauth/ (tokens), ~/.local/share/amp/ide (lockfile). Env: AMP_DATA_HOME, AMP_API_KEY. Curated skills/tools/MCPs/commands.",
       "paths": {
         "windows": [
-          "%APPDATA%\\Code\\User\\globalStorage\\sourcegraph.amp",
-          "%USERPROFILE%\\.vscode\\extensions\\sourcegraph.amp*"
+          "%USERPROFILE%\\.config\\amp",
+          "%USERPROFILE%\\.amp\\oauth",
+          "%LOCALAPPDATA%\\amp\\ide"
         ],
         "macos": [
-          "~/Library/Application Support/Code/User/globalStorage/sourcegraph.amp",
-          "~/.vscode/extensions/sourcegraph.amp*"
+          "~/.config/amp",
+          "~/.amp/oauth",
+          "~/.local/share/amp/ide"
         ],
         "linux": [
-          "~/.config/Code/User/globalStorage/sourcegraph.amp",
-          "~/.vscode/extensions/sourcegraph.amp*"
+          "~/.config/amp",
+          "~/.amp/oauth",
+          "~/.local/share/amp/ide"
         ]
       },
       "project_local": []
@@ -985,37 +1033,81 @@
     {
       "id": "mistral-vibe",
       "name": "Mistral Vibe",
-      "publisher": "Mistral",
-      "type": "extension",
+      "publisher": "Mistral AI (mistralai)",
+      "type": "cli",
       "cloud_only": false,
       "categories": [
-        "skills"
+        "skills",
+        "subagents",
+        "tools",
+        "mcps",
+        "hooks"
       ],
-      "notes": "VS Code extension. Extension ID: mistralai.mistral-vibe-code (confirmed). Has skills. 'Vibe home directory' for credentials — exact path NOT published; check ~/.vibe or ~/.mistral on your system.",
+      "notes": "Terminal AI coding agent. Binary: vibe (PyPI mistral-vibe). State root: ~/.vibe/ (all platforms). Override: VIBE_HOME. Skills, subagents, tools, MCPs, hooks, AGENTS.md context.",
       "paths": {
         "windows": [
-          "%APPDATA%\\Code\\User\\globalStorage\\mistralai.mistral-vibe-code",
-          "%USERPROFILE%\\.vscode\\extensions\\mistralai.mistral-vibe-code*"
+          "%USERPROFILE%\\.vibe"
         ],
         "macos": [
-          "~/Library/Application Support/Code/User/globalStorage/mistralai.mistral-vibe-code",
-          "~/.vscode/extensions/mistralai.mistral-vibe-code*"
+          "~/.vibe"
         ],
         "linux": [
-          "~/.config/Code/User/globalStorage/mistralai.mistral-vibe-code",
-          "~/.vscode/extensions/mistralai.mistral-vibe-code*"
+          "~/.vibe"
         ]
       },
-      "project_local": []
+      "project_local": [
+        {
+          "path": ".vibe/config.toml",
+          "artifacts": [
+            "config"
+          ]
+        },
+        {
+          "path": ".vibe/skills",
+          "artifacts": [
+            "skills"
+          ]
+        },
+        {
+          "path": ".vibe/agents",
+          "artifacts": [
+            "subagents"
+          ]
+        },
+        {
+          "path": ".vibe/prompts",
+          "artifacts": [
+            "prompts"
+          ]
+        },
+        {
+          "path": ".vibe/hooks.toml",
+          "artifacts": [
+            "hooks"
+          ]
+        },
+        {
+          "path": ".agents/skills",
+          "artifacts": [
+            "skills"
+          ]
+        },
+        {
+          "path": "AGENTS.md",
+          "artifacts": [
+            "rules"
+          ]
+        }
+      ]
     },
     {
       "id": "blackbox",
       "name": "BLACKBOX AI",
-      "publisher": "BLACKBOX",
+      "publisher": "BLACKBOX AI",
       "type": "extension",
       "cloud_only": false,
       "categories": [],
-      "notes": "VS Code extension. Extension ID: Blackboxapp.blackbox.",
+      "notes": "VS Code extension (Blackboxapp.blackbox) + CLI binary 'blackbox' (agent run, monitor, queue). No global state dir confirmed.",
       "paths": {
         "windows": [
           "%APPDATA%\\Code\\User\\globalStorage\\Blackboxapp.blackbox",
@@ -1035,15 +1127,20 @@
     {
       "id": "openhands",
       "name": "OpenHands",
-      "publisher": "All Hands AI",
+      "publisher": "All-Hands-AI",
       "type": "self-hosted",
       "cloud_only": false,
       "categories": [
+        "plugins",
         "rules",
         "skills",
-        "mcps"
+        "subagents",
+        "tools",
+        "mcps",
+        "hooks",
+        "memory"
       ],
-      "notes": "Open-source, self-hosted via Docker. State root ~/.openhands. Rules/skills are microagents.",
+      "notes": "Open-source, self-hosted via Docker. CLI: agent-canvas (npm @openhands/agent-canvas). State root ~/.openhands (Docker mount -v $HOME/.openhands). Rules/skills are microagents. Project-local .openhands/ and config.toml.",
       "paths": {
         "windows": [
           "%USERPROFILE%\\.openhands"
@@ -1055,12 +1152,26 @@
           "~/.openhands"
         ]
       },
-      "project_local": []
+      "project_local": [
+        {
+          "path": ".openhands",
+          "artifacts": [
+            "config",
+            "skills"
+          ]
+        },
+        {
+          "path": "config.toml",
+          "artifacts": [
+            "config"
+          ]
+        }
+      ]
     },
     {
       "id": "genie",
       "name": "Genie",
-      "publisher": "Cosine AI",
+      "publisher": "Cosine AI (UNVERIFIED — source unreachable)",
       "type": "cli",
       "cloud_only": false,
       "categories": [
@@ -1069,7 +1180,7 @@
         "hooks",
         "mcps"
       ],
-      "notes": "Local CLI is 'cos' (Cosine CLI). State root: ~/.cosine/ (macOS/Linux confirmed; Windows path UNPUBLISHED). Files: auth.json, sessions/, config.toml, mcp.json, skills/, plugins/, projects/<id>/skills/. Hooks in repo cosine.toml. Memory: .cosine/agents.md (repo). No COSINE_HOME env var (base dir not relocatable).",
+      "notes": "⚠️ UNVERIFIED — CosineAI/genie repo returns 404; cosine.ai domain is parked (GoDaddy for-sale). Binary 'cos', ~/.cosine/ paths, and categories cannot be confirmed from any official source. Retained as-is but UNVERIFIED — remove if accuracy is required.",
       "paths": {
         "windows": [
           "%USERPROFILE%\\.cosine"
@@ -1112,14 +1223,25 @@
       "id": "devin",
       "name": "Devin",
       "publisher": "Cognition AI",
-      "type": "cloud",
-      "cloud_only": true,
-      "categories": [],
-      "notes": "Cloud-only agent running in isolated sandbox. No local state. Skipped by the runner.",
+      "type": "ide",
+      "cloud_only": false,
+      "categories": [
+        "rules",
+        "mcps",
+        "skills",
+        "tools"
+      ],
+      "notes": "Devin Desktop (IDE, binary devin-desktop) + Devin CLI. Local config: ~/.codeium/windsurf (all platforms). NOT cloud-only — stores local state.",
       "paths": {
-        "windows": [],
-        "macos": [],
-        "linux": []
+        "windows": [
+          "%USERPROFILE%\\.codeium\\windsurf"
+        ],
+        "macos": [
+          "~/.codeium/windsurf"
+        ],
+        "linux": [
+          "~/.codeium/windsurf"
+        ]
       },
       "project_local": []
     },
@@ -1141,11 +1263,11 @@
     {
       "id": "manus",
       "name": "Manus",
-      "publisher": "Monica / Semantic Labs",
+      "publisher": "Meta",
       "type": "cloud",
-      "cloud_only": true,
+      "cloud_only": false,
       "categories": [],
-      "notes": "Cloud-only browser-based agent. No local install. Skipped by the runner.",
+      "notes": "General-purpose agent (now part of Meta). Ships macOS/Windows/iOS/Android desktop+mobile clients + web app. Local state paths NOT publicly documented. cloud_only removed (has local clients).",
       "paths": {
         "windows": [],
         "macos": [],
@@ -1166,7 +1288,8 @@
         "subagents",
         "tools",
         "mcps",
-        "hooks"
+        "hooks",
+        "memory"
       ],
       "notes": "xAI fullscreen TUI + coding agent harness. State root is ~/.grok (override with GROK_HOME; no XDG override). Auth: ~/.grok/auth.json (auto-managed) + XAI_API_KEY fallback. MCP creds: ~/.grok/mcp_credentials.json. Config: ~/.grok/config.toml, ~/.grok/pager.toml. Has skills, plugins, hooks, agents, subagents, workflows, memory, MCP, LSP. Scans Claude/Cursor compat dirs for skills/rules/hooks/mcp when enabled.",
       "paths": {
@@ -1217,30 +1340,22 @@
       "type": "cli",
       "cloud_only": false,
       "categories": [
-        "plugins",
         "skills",
+        "subagents",
         "tools",
         "mcps",
-        "rules",
-        "subagents",
-        "memory",
-        "hooks"
+        "rules"
       ],
-      "notes": "Open-source (Apache 2.0) multi-platform AI coding agent, fork of Roo Code/OpenCode. CLI binary 'kilo'; VS Code ext 'kilo-code'. State root ~/.config/kilo/ (kilo.jsonc, tui.jsonc). MCP configured inline in kilo.jsonc. Legacy: also reads ~/.config/opencode/. Override: KILO_CONFIG env (config file path).",
+      "notes": "Open-source (Apache 2.0) multi-platform AI coding agent, fork of Roo Code/OpenCode. CLI binary 'kilo'; VS Code ext 'kilo-code'. Config: ~/.config/kilo (Linux), ~/Library/Application Support/kilo (macOS), %LOCALAPPDATA%\\kilo (Windows). Env: KILO_CONFIG_DIR (config dir), KILO_CONFIG (config file path), KILO_CONFIG_CONTENT (inject config string). NOTE: ~/.opencode.json + ~/.opencode/ are NOT live config — only read by tui-migrate for one-time migration.",
       "paths": {
         "windows": [
-          "%USERPROFILE%\\.config\\kilo",
-          "%USERPROFILE%\\.opencode.json"
+          "%LOCALAPPDATA%\\kilo"
         ],
         "macos": [
-          "~/.config/kilo",
-          "~/.opencode.json",
-          "~/.config/opencode"
+          "~/Library/Application Support/kilo"
         ],
         "linux": [
-          "~/.config/kilo",
-          "~/.opencode.json",
-          "~/.config/opencode"
+          "~/.config/kilo"
         ]
       },
       "project_local": [
@@ -1261,22 +1376,6 @@
           "artifacts": [
             "config"
           ]
-        },
-        {
-          "path": ".opencode",
-          "artifacts": [
-            "config",
-            "skills",
-            "tools",
-            "plugins",
-            "modes"
-          ]
-        },
-        {
-          "path": ".kilocode",
-          "artifacts": [
-            "skills"
-          ]
         }
       ]
     },
@@ -1287,8 +1386,6 @@
       "type": "cli",
       "cloud_only": false,
       "categories": [
-        "plugins",
-        "rules",
         "skills",
         "subagents",
         "tools",
@@ -1365,14 +1462,7 @@
         {
           "path": ".agents",
           "artifacts": [
-            "skills",
             "config"
-          ]
-        },
-        {
-          "path": ".agents/skills",
-          "artifacts": [
-            "skills"
           ]
         },
         {
@@ -1445,7 +1535,6 @@
         "subagents",
         "tools",
         "memory",
-        "hooks",
         "mcps"
       ],
       "notes": "Self-improving agentic coding CLI. State root ~/.hermes/ (config.yaml, .env, auth.json, SOUL.md, memories/, skills/, cron/, sessions/, logs/, sandboxes/singularity/, state-snapshots/, backups/). Six terminal backends (local/Docker/SSH/Singularity/Modal/Daytona). Also runs Telegram/Discord/Slack/WhatsApp gateways. Override: HERMES_HOME.",
@@ -1474,10 +1563,9 @@
         "subagents",
         "tools",
         "mcps",
-        "hooks",
         "memory"
       ],
-      "notes": "Self-hosted multi-channel gateway + agent framework (20+ chat channels). State root ~/.openclaw/ (openclaw.json, .env, credentials/, state/openclaw.sqlite, agents/<id>/agent/, agents/<id>/sessions/, workspace/, skills/, sandboxes/, memory/, canvas/). Sessions in SQLite. Logs /tmp/openclaw/openclaw-YYYY-MM-DD.log. Override: OPENCLAW_HOME, OPENCLAW_STATE_DIR.",
+      "notes": "Self-hosted multi-channel gateway + agent framework (20+ chat channels). State root ~/.openclaw/ (openclaw.json, credentials/, state/openclaw.sqlite, agents/, workspace/, skills/, sandboxes/, memory/, canvas/). Sessions in SQLite. Override: OPENCLAW_HOME, OPENCLAW_STATE_DIR, OPENCLAW_CONFIG_PATH.",
       "paths": {
         "windows": [
           "%USERPROFILE%\\.openclaw"
@@ -1513,11 +1601,9 @@
       "categories": [
         "skills",
         "mcps",
-        "tools",
-        "hooks",
-        "rules"
+        "tools"
       ],
-      "notes": "Terminal coding agent (frontier Laguna model) + ACP-compatible editor integration. Config: ~/.config/poolside/ (settings.yaml, credentials.json) on ALL platforms. State/data: ~/Library/Application Support/poolside (macOS), ~/.local/state + ~/.local/share/poolside (Linux), %LOCALAPPDATA%\\poolside (Windows) — logs/trajectories/sessions. No POOLSIDE_HOME env var.",
+      "notes": "Terminal coding agent (Laguna model) + ACP editor integration. Config: ~/.config/poolside/ (settings.yaml, credentials.json) on ALL platforms. State/runtime paths (macOS ~/Library/Application Support/poolside, Linux ~/.local/state+share/poolside, Windows %LOCALAPPDATA%\\poolside) are UNVERIFIED (docs are access-gated). No POOLSIDE_HOME.",
       "paths": {
         "windows": [
           "%USERPROFILE%\\.config\\poolside",
@@ -1562,7 +1648,8 @@
       "type": "cli",
       "cloud_only": false,
       "categories": [
-        "tools"
+        "tools",
+        "mcps"
       ],
       "notes": "Terminal coding agent connecting to hosted Peezy Agent Gateway. State: ~/.peezy/config.json only (single file). Embedded in-process MCP server (create_image/search_web/fetch_url). No dedicated auth/cache/session/skill dirs. Default model peezy-fast against api.p0.systems. No PEEZY_HOME.",
       "paths": {
@@ -1591,7 +1678,6 @@
         "subagents",
         "tools",
         "mcps",
-        "hooks",
         "memory"
       ],
       "notes": "Terminal AI coding agent (fork of pi-mono). State root ~/.omp/ (agent/: config.yml, agent.db SQLite auth+settings, sessions/, blobs/, history.db, models.db, stats.db, mcp.json, hooks/, rules/, skills/, plugins/, memories/; cache/: github-cache.db, webcache; logs/). Subagents via task tool fan-out to ~/.omp/wt/. Profiles relocate user base via OMP_PROFILE/PI_PROFILE. Override: PI_CODING_AGENT_DIR, PI_CONFIG_DIR.",
