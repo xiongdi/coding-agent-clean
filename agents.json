@@ -1138,6 +1138,518 @@
         "linux": []
       },
       "project_local": []
+    },
+    {
+      "id": "grok-build",
+      "name": "Grok Build",
+      "publisher": "xAI",
+      "type": "cli",
+      "cloud_only": false,
+      "categories": [
+        "plugins",
+        "rules",
+        "skills",
+        "subagents",
+        "tools",
+        "mcps",
+        "hooks"
+      ],
+      "notes": "xAI fullscreen TUI + coding agent harness. State root is ~/.grok (override with GROK_HOME; no XDG override). Auth: ~/.grok/auth.json (auto-managed) + XAI_API_KEY fallback. MCP creds: ~/.grok/mcp_credentials.json. Config: ~/.grok/config.toml, ~/.grok/pager.toml. Has skills, plugins, hooks, agents, subagents, workflows, memory, MCP, LSP. Scans Claude/Cursor compat dirs for skills/rules/hooks/mcp when enabled.",
+      "paths": {
+        "windows": [
+          "%USERPROFILE%\\.grok"
+        ],
+        "macos": [
+          "~/.grok"
+        ],
+        "linux": [
+          "~/.grok"
+        ]
+      },
+      "project_local": [
+        {
+          "path": ".grok",
+          "artifacts": [
+            "config",
+            "mcps",
+            "skills",
+            "plugins",
+            "hooks",
+            "agents",
+            "rules",
+            "workflows",
+            "lsp",
+            "sandbox"
+          ]
+        },
+        {
+          "path": "AGENTS.md",
+          "artifacts": [
+            "rules"
+          ]
+        },
+        {
+          "path": "CLAUDE.md",
+          "artifacts": [
+            "rules"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kilo-code",
+      "name": "Kilo Code",
+      "publisher": "Kilo Code, Inc. (Anaconda)",
+      "type": "cli",
+      "cloud_only": false,
+      "categories": [
+        "plugins",
+        "skills",
+        "tools",
+        "mcps",
+        "rules",
+        "subagents",
+        "memory",
+        "hooks"
+      ],
+      "notes": "Open-source (Apache 2.0) multi-platform AI coding agent, fork of Roo Code/OpenCode. CLI binary 'kilo'; VS Code ext 'kilo-code'. State root ~/.config/kilo/ (kilo.jsonc, tui.jsonc). MCP configured inline in kilo.jsonc. Legacy: also reads ~/.config/opencode/. Override: KILO_CONFIG env (config file path).",
+      "paths": {
+        "windows": [
+          "%USERPROFILE%\\.config\\kilo",
+          "%USERPROFILE%\\.opencode.json"
+        ],
+        "macos": [
+          "~/.config/kilo",
+          "~/.opencode.json",
+          "~/.config/opencode"
+        ],
+        "linux": [
+          "~/.config/kilo",
+          "~/.opencode.json",
+          "~/.config/opencode"
+        ]
+      },
+      "project_local": [
+        {
+          "path": "kilo.jsonc",
+          "artifacts": [
+            "config"
+          ]
+        },
+        {
+          "path": "kilo.json",
+          "artifacts": [
+            "config"
+          ]
+        },
+        {
+          "path": ".kilo",
+          "artifacts": [
+            "config"
+          ]
+        },
+        {
+          "path": ".opencode",
+          "artifacts": [
+            "config",
+            "skills",
+            "tools",
+            "plugins",
+            "modes"
+          ]
+        },
+        {
+          "path": ".kilocode",
+          "artifacts": [
+            "skills"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "command-code",
+      "name": "Command Code",
+      "publisher": "CommandCodeAI",
+      "type": "cli",
+      "cloud_only": false,
+      "categories": [
+        "plugins",
+        "rules",
+        "skills",
+        "subagents",
+        "tools",
+        "mcps",
+        "hooks",
+        "memory",
+        "sessions"
+      ],
+      "notes": "Terminal-native AI coding agent. State root ~/.commandcode/ (config.json, settings.json, auth.json 0600, keybindings.json, mcp.json, projects/, cron/). Hooks: PreToolUse/PostToolUse/Stop/SessionStart. Sessions as .jsonl transcripts. No COMMANDCODE_HOME; uses HOME/USERPROFILE.",
+      "paths": {
+        "windows": [
+          "%USERPROFILE%\\.commandcode"
+        ],
+        "macos": [
+          "~/.commandcode"
+        ],
+        "linux": [
+          "~/.commandcode"
+        ]
+      },
+      "project_local": [
+        {
+          "path": ".commandcode/settings.json",
+          "artifacts": [
+            "config"
+          ]
+        },
+        {
+          "path": ".commandcode/settings.local.json",
+          "artifacts": [
+            "config"
+          ]
+        },
+        {
+          "path": ".commandcode/commands",
+          "artifacts": [
+            "skills"
+          ]
+        },
+        {
+          "path": ".mcp.json",
+          "artifacts": [
+            "mcps"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "codebuff",
+      "name": "Codebuff",
+      "publisher": "CodebuffAI",
+      "type": "cli",
+      "cloud_only": false,
+      "categories": [
+        "skills",
+        "subagents",
+        "tools",
+        "mcps",
+        "memory"
+      ],
+      "notes": "Self-improving multi-agent CLI coding agent (RLHF). State root ~/.config/manicode/ (internal codename 'manicode' — NOT codebuff). Files: credentials.json, settings.json, recent-projects.json, projects/{name}/chats/{id}/ (chats as jsonl). Skills ~/.agents/skills/. Chats per-project.",
+      "paths": {
+        "windows": [
+          "%USERPROFILE%\\.config\\manicode"
+        ],
+        "macos": [
+          "~/.config/manicode"
+        ],
+        "linux": [
+          "~/.config/manicode"
+        ]
+      },
+      "project_local": [
+        {
+          "path": ".agents",
+          "artifacts": [
+            "skills",
+            "config"
+          ]
+        },
+        {
+          "path": ".agents/skills",
+          "artifacts": [
+            "skills"
+          ]
+        },
+        {
+          "path": "knowledge.md",
+          "artifacts": [
+            "memory"
+          ]
+        },
+        {
+          "path": ".codebuffignore",
+          "artifacts": [
+            "config"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pi",
+      "name": "pi",
+      "publisher": "earendil-works",
+      "type": "cli",
+      "cloud_only": false,
+      "categories": [
+        "skills",
+        "tools",
+        "hooks",
+        "memory",
+        "plugins"
+      ],
+      "notes": "Minimal extensible AI coding-agent harness. State root ~/.pi/agent/ (settings.json, models.json, keybindings.json, trust.json, SYSTEM.md, APPEND_SYSTEM.md, AGENTS.md, sessions/, prompts/, skills/, extensions/, themes/, git/, npm/, auth.json). No built-in MCP/plugins/hooks/subagents/plan mode — all opt-in via TypeScript Extensions and Pi Packages (npm/git-installed). Auth in auth.json. Sessions JSONL under ~/.pi/agent/sessions/. Override: PI_CODING_AGENT_DIR, PI_CODING_AGENT_SESSION_DIR.",
+      "paths": {
+        "windows": [
+          "%USERPROFILE%\\.pi\\agent"
+        ],
+        "macos": [
+          "~/.pi/agent"
+        ],
+        "linux": [
+          "~/.pi/agent"
+        ]
+      },
+      "project_local": [
+        {
+          "path": ".pi",
+          "artifacts": [
+            "config",
+            "skills",
+            "plugins",
+            "prompts",
+            "themes",
+            "sessions"
+          ]
+        },
+        {
+          "path": ".agents/skills",
+          "artifacts": [
+            "skills"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hermes-agent",
+      "name": "Hermes Agent",
+      "publisher": "Nous Research",
+      "type": "cli",
+      "cloud_only": false,
+      "categories": [
+        "skills",
+        "subagents",
+        "tools",
+        "memory",
+        "hooks",
+        "mcps"
+      ],
+      "notes": "Self-improving agentic coding CLI. State root ~/.hermes/ (config.yaml, .env, auth.json, SOUL.md, memories/, skills/, cron/, sessions/, logs/, sandboxes/singularity/, state-snapshots/, backups/). Six terminal backends (local/Docker/SSH/Singularity/Modal/Daytona). Also runs Telegram/Discord/Slack/WhatsApp gateways. Override: HERMES_HOME.",
+      "paths": {
+        "windows": [
+          "%LOCALAPPDATA%\\hermes"
+        ],
+        "macos": [
+          "~/.hermes"
+        ],
+        "linux": [
+          "~/.hermes"
+        ]
+      },
+      "project_local": []
+    },
+    {
+      "id": "openclaw",
+      "name": "OpenClaw",
+      "publisher": "OpenClaw Foundation",
+      "type": "cli",
+      "cloud_only": false,
+      "categories": [
+        "plugins",
+        "skills",
+        "subagents",
+        "tools",
+        "mcps",
+        "hooks",
+        "memory"
+      ],
+      "notes": "Self-hosted multi-channel gateway + agent framework (20+ chat channels). State root ~/.openclaw/ (openclaw.json, .env, credentials/, state/openclaw.sqlite, agents/<id>/agent/, agents/<id>/sessions/, workspace/, skills/, sandboxes/, memory/, canvas/). Sessions in SQLite. Logs /tmp/openclaw/openclaw-YYYY-MM-DD.log. Override: OPENCLAW_HOME, OPENCLAW_STATE_DIR.",
+      "paths": {
+        "windows": [
+          "%USERPROFILE%\\.openclaw"
+        ],
+        "macos": [
+          "~/.openclaw"
+        ],
+        "linux": [
+          "~/.openclaw"
+        ]
+      },
+      "project_local": [
+        {
+          "path": "AGENTS.md",
+          "artifacts": [
+            "rules"
+          ]
+        },
+        {
+          "path": "SOUL.md",
+          "artifacts": [
+            "memory"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "poolside",
+      "name": "Poolside",
+      "publisher": "Poolside",
+      "type": "cli",
+      "cloud_only": false,
+      "categories": [
+        "skills",
+        "mcps",
+        "tools",
+        "hooks",
+        "rules"
+      ],
+      "notes": "Terminal coding agent (frontier Laguna model) + ACP-compatible editor integration. State root ~/.config/poolside/ (settings.yaml, credentials.json). MCP servers stored inline in settings.yaml. Skills via agentskills.io. Auth: credentials.json or POOLSIDE_API_KEY. No POOLSIDE_HOME documented (XDG-style).",
+      "paths": {
+        "windows": [
+          "%APPDATA%\\poolside"
+        ],
+        "macos": [
+          "~/Library/Application Support/poolside"
+        ],
+        "linux": [
+          "~/.config/poolside"
+        ]
+      },
+      "project_local": [
+        {
+          "path": ".poolside/settings.yaml",
+          "artifacts": [
+            "config",
+            "mcps"
+          ]
+        },
+        {
+          "path": ".poolside/settings.local.yaml",
+          "artifacts": [
+            "config"
+          ]
+        },
+        {
+          "path": "AGENTS.md",
+          "artifacts": [
+            "rules"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "peezy",
+      "name": "Peezy CLI",
+      "publisher": "p0.systems",
+      "type": "cli",
+      "cloud_only": false,
+      "categories": [
+        "tools"
+      ],
+      "notes": "Terminal coding agent connecting to hosted Peezy Agent Gateway. State: ~/.peezy/config.json only (single file). Embedded in-process MCP server (create_image/search_web/fetch_url). No dedicated auth/cache/session/skill dirs. Default model peezy-fast against api.p0.systems. No PEEZY_HOME.",
+      "paths": {
+        "windows": [
+          "%USERPROFILE%\\.peezy"
+        ],
+        "macos": [
+          "~/.peezy"
+        ],
+        "linux": [
+          "~/.peezy"
+        ]
+      },
+      "project_local": []
+    },
+    {
+      "id": "oh-my-pi",
+      "name": "Oh-My-Pi",
+      "publisher": "can1357 / omp.sh",
+      "type": "cli",
+      "cloud_only": false,
+      "categories": [
+        "plugins",
+        "rules",
+        "skills",
+        "subagents",
+        "tools",
+        "mcps",
+        "hooks",
+        "memory"
+      ],
+      "notes": "Terminal AI coding agent (fork of pi-mono). State root ~/.omp/ (agent/: config.yml, agent.db SQLite auth+settings, sessions/, blobs/, history.db, models.db, stats.db, mcp.json, hooks/, rules/, skills/, plugins/, memories/; cache/: github-cache.db, webcache; logs/). Subagents via task tool fan-out to ~/.omp/wt/. Profiles relocate user base via OMP_PROFILE/PI_PROFILE. Override: PI_CODING_AGENT_DIR, PI_CONFIG_DIR.",
+      "paths": {
+        "windows": [
+          "%USERPROFILE%\\.omp"
+        ],
+        "macos": [
+          "~/.omp"
+        ],
+        "linux": [
+          "~/.omp"
+        ]
+      },
+      "project_local": [
+        {
+          "path": ".omp",
+          "artifacts": [
+            "config",
+            "mcps",
+            "skills",
+            "plugins",
+            "hooks",
+            "rules",
+            "prompts",
+            "tools",
+            "instructions",
+            "extensions"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mimocode",
+      "name": "MiMo Code",
+      "publisher": "Xiaomi (XiaomiMiMo)",
+      "type": "cli",
+      "cloud_only": false,
+      "categories": [
+        "plugins",
+        "rules",
+        "skills",
+        "tools",
+        "mcps",
+        "memory"
+      ],
+      "notes": "Terminal-native local AI coding agent, fork of OpenCode. Binary mimo (npm @mimo-ai/cli). Runs local TUI, reads/writes code, runs commands, Git, persistent memory, LSP/MCP/plugins. State: ~/.config/mimocode/ (config), ~/.local/share/mimocode/ (data/DB/memory/logs), ~/.local/state/mimocode/ (TUI prefs), ~/.cache/mimocode/ (LSP/skills cache). Override: MIMOCODE_HOME.",
+      "paths": {
+        "windows": [
+          "%USERPROFILE%\\.config\\mimocode",
+          "%LOCALAPPDATA%\\mimocode",
+          "%LOCALAPPDATA%\\mimocode\\cache"
+        ],
+        "macos": [
+          "~/.config/mimocode",
+          "~/.local/share/mimocode",
+          "~/.local/state/mimocode",
+          "~/.cache/mimocode"
+        ],
+        "linux": [
+          "~/.config/mimocode",
+          "~/.local/share/mimocode",
+          "~/.local/state/mimocode",
+          "~/.cache/mimocode"
+        ]
+      },
+      "project_local": [
+        {
+          "path": ".mimocode",
+          "artifacts": [
+            "config",
+            "skills",
+            "rules"
+          ]
+        }
+      ]
     }
   ]
 }
