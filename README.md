@@ -1,6 +1,6 @@
 # coding-agent-clean
 
-> 把 [artificialanalysis.ai/agents/coding](https://artificialanalysis.ai/agents/coding) 列出的 coding agent 清理得像刚安装一样——
+> 把主流榜单（[artificialanalysis.ai/agents/coding](https://artificialanalysis.ai/agents/coding)、[OpenRouter 编码应用榜](https://openrouter.ai/apps/category/coding)）列出的 coding agent 清理得像刚安装一样——
 > 抹掉 **plugins · rules · skills · subagents · tools · MCPs · hooks** 以及所有配置 / 缓存 / 认证 / 状态，保留二进制本体。
 
 跨平台（Windows / macOS / Linux），**默认 dry-run，不改任何东西**，除非你显式传 `--apply` / `-Apply`。
@@ -87,38 +87,77 @@ Copy-Item -Recurse ".\backups\20260727_211300\claude-code\.claude" "$env:USERPRO
 
 ---
 
-## 支持的 Agent（29 个）
+## 支持的 Agent（42 个）
 
-按 artifact 丰富度排序。**categories** 列出该 agent 实际拥有的 artifact 类别（plugins / rules / skills / subagents / tools / MCPs / hooks）。
+覆盖 [artificialanalysis.ai](https://artificialanalysis.ai/agents/coding) 全量 30 个 + [OpenRouter 编码应用榜](https://openrouter.ai/apps/category/coding) 新增 12 个（去重后）。每个条目均经官方文档/GitHub 验证；明确排除的 non-agent（游戏引擎、通用代理框架、云 SaaS、API 网关等）不列入。
 
-| Agent | 类型 | categories | 说明 |
-|-------|------|-----------|------|
-| **Claude Code** | CLI | plugins, rules, skills, subagents, tools, MCPs, hooks | 类别最全，`~/.claude` 一个根目录全覆盖 |
-| **Kiro** | IDE | hooks, MCPs | 独有的 hooks / specs / steering 功能 |
-| **Warp** | Terminal | rules, skills, MCPs, subagents | workflows=rules, `~/.warp/skills`, `~/.agents` |
-| **Cursor** | IDE | rules, MCPs, skills, subagents | `.cursor/rules/*.mdc`, `mcp.json` |
-| **Windsurf** | IDE | MCPs | `mcp_config.json` |
-| **Qoder** | IDE | MCPs, plugins | Knowledge Engine |
-| **Zed** | IDE | plugins | 扩展即插件，Rust 原生编辑器（非 VS Code） |
-| **Cline** | Extension | MCPs | 项目级 `.clinerules` |
-| **Roo Code** | Extension | rules, MCPs | `.roo/rules`, `.roomodes` |
-| **Continue** | Extension | MCPs | `~/.continue`（API key 明文存储） |
-| **Gemini CLI** | CLI | MCPs | `~/.gemini`，扩展基于注册表 |
-| **Goose** | CLI | plugins, tools | 扩展 + recipes |
-| **Kimi CLI** | CLI | MCPs, subagents | `~/.kimi`，subagent 按 session 存 |
-| **Qwen Code** | CLI | skills | `~/.qwen`，项目级 `.qwen/skills` |
-| **opencode** | CLI | tools | 已归档改名 Crush；自定义命令 |
-| **Codex** | CLI | — | `~/.codex`（`$CODEX_HOME`） |
-| **Aider** | CLI | — | 纯项目本地（`.aider.*`），无全局状态 |
-| **Genie** | CLI | — | `cos` CLI，`~/.cosine` |
-| **OpenHands** | Self-hosted | rules, skills, MCPs | `~/.openhands`，microagents |
-| **GitHub Copilot** | Extension | — | 认证走系统凭据管理器 |
-| **Amazon Q** | Extension | — | 认证走系统凭据管理器 |
-| **Gemini Code Assist** | Extension | — | 也读 `~/.config/gcloud` |
-| **Augment / Amp / BLACKBOX / Mistral Vibe** | Extension | — | 标准 VS Code 扩展存储 |
-| **Devin / Jules / Manus** | Cloud | — | 云-only，无本地状态，自动跳过 |
+按 artifact 丰富度排序。**categories** 列出该 agent 实际拥有的 artifact 类别（plugins / rules / skills / subagents / tools / mcps / hooks / memory / sessions）。
 
-> ⚠️ **Google Antigravity IDE** 不是真实产品（搜索结果疑似幻觉），已从列表移除。
+### CLI 工具
+
+| Agent | categories | 状态根 / 说明 |
+|-------|-----------|------|
+| **Claude Code** | plugins, rules, skills, subagents, tools, mcps, hooks | `~/.claude`（`CLAUDE_CONFIG_DIR`），类别最全 |
+| **Grok Build** | plugins, rules, skills, subagents, tools, mcps, hooks | `~/.grok`（`GROK_HOME`），xAI TUI harness |
+| **Command Code** | plugins, rules, skills, subagents, tools, mcps, hooks, memory, sessions | `~/.commandcode` |
+| **OpenClaw** | plugins, rules, skills, subagents, tools, mcps, hooks, memory | `~/.openclaw`（`OPENCLAW_HOME`） |
+| **Hermes Agent** | skills, subagents, tools, memory, hooks, mcps | `~/.hermes`（`HERMES_HOME`），Nous Research |
+| **Kilo Code** | plugins, skills, tools, mcps, rules, subagents, memory, hooks | `~/.config/kilo`，OpenCode/Roo Code fork |
+| **Codex** | plugins, skills, tools, mcps, hooks | `~/.codex`（`CODEX_HOME`） |
+| **Oh-My-Pi** | plugins, rules, skills, subagents, tools, mcps, hooks, memory | `~/.omp`，omp.sh 终端代理 |
+| **Codebuff** | skills, subagents, tools, mcps, memory | `~/.config/manicode`（内部代号 manicode） |
+| **Genie** | skills, plugins, hooks, mcps | `cos` CLI，`~/.cosine` |
+| **Goose** | plugins, tools | Block 开源 dev agent，`~/.config/goose` |
+| **Gemini CLI** | mcps | `~/.gemini`（`GEMINI_CLI_HOME`） |
+| **Kimi CLI** | mcps, subagents | `~/.kimi`（`KIMI_SHARE_DIR`） |
+| **Qwen Code** | skills | `~/.qwen`（`QWEN_HOME`） |
+| **poolside** | skills, mcps, tools, hooks, rules | `~/.config/poolside`，Laguna 模型终端代理 |
+| **pi** | skills, tools, hooks, memory, plugins | `~/.pi/agent`（`PI_CODING_AGENT_DIR`） |
+| **Crush** | skills, rules, mcps | `~/.config/crush` + `~/.local/share/crush`，opencode 继承者 |
+| **opencode** (archived) | tools, mcps | 已归档改名 Crush |
+| **Peezy CLI** | tools | `~/.peezy/config.json`，p0.systems |
+| **Aider** | — | 纯项目本地 `.aider.*`，无全局状态 |
+| **MiMo Code** | plugins, rules, skills, tools, mcps, memory | `~/.config/mimocode`，XiaomiMiMo，OpenCode fork |
+
+### 独立 IDE
+
+| Agent | categories | 说明 |
+|-------|-----------|------|
+| **Kiro** | plugins, rules, skills, subagents, tools, mcps, hooks | 独有的 hooks / specs / steering |
+| **Google Antigravity** | plugins, rules, skills, mcps, hooks | `~/.gemini/antigravity*`，Agentic IDE + CLI + SDK |
+| **Cursor** | rules, mcps, skills, subagents | `.cursor/rules/*.mdc`、`mcp.json` |
+| **Qoder** | mcps, plugins | Knowledge Engine（路径为推断，未经官方确认） |
+| **Zed** | plugins | 扩展即插件，Rust 原生编辑器（非 VS Code） |
+| **Windsurf** | MCPs | `mcp_config.json` |
+
+### VS Code / JetBrains 扩展
+
+| Agent | categories | 说明 |
+|-------|-----------|------|
+| **Continue** | rules, skills, subagents, mcps, hooks | `~/.continue`（API key 明文存储） |
+| **Cline** | rules, MCPs | 项目级 `.clinerules`，publisher: saoudrizwan |
+| **Roo Code** (shut down) | rules, MCPs | 2026-05-15 关停，仅留作历史参考 |
+| **Mistral Vibe** | skills | `mistralai.mistral-vibe-code` |
+| **GitHub Copilot** | — | 认证走系统凭据管理器 |
+| **Amazon Q** | — | 认证走系统凭据管理器 |
+| **Gemini Code Assist** | — | 也读 `~/.config/gcloud` |
+| **Augment Code / Amp / BLACKBOX AI** | — | 标准 VS Code 扩展存储 |
+
+### 终端
+
+| Agent | categories | 说明 |
+|-------|-----------|------|
+| **Warp** | rules, skills, mcps, subagents | workflows=rules、`~/.warp/skills`、`~/.agents` |
+
+### 自托管
+
+| Agent | categories | 说明 |
+|-------|-----------|------|
+| **OpenHands** | rules, skills, mcps | `~/.openhands`，rules/skills 即 microagents |
+
+### 云-only（自动跳过）
+
+Devin / Jules / Manus — 无本地状态。
 
 ---
 
@@ -142,18 +181,30 @@ Copy-Item -Recurse ".\backups\20260727_211300\claude-code\.claude" "$env:USERPRO
 | **Kiro** | `%APPDATA%\Kiro`, `~/.kiro` | `~/Library/Application Support/Kiro`, `~/.kiro` | `~/.config/Kiro`, `~/.kiro` |
 | **Qoder** | `%APPDATA%\Qoder`, `~/.qoder` | `~/Library/Application Support/Qoder`, `~/.qoder` | `~/.config/Qoder`, `~/.qoder` |
 
-### CLI 工具
+### CLI 工具（全局状态根）
 
-| Agent | 全局状态根（三平台统一 `~`） |
-|-------|--------------------------|
-| **Claude Code** | `~/.claude` |
-| **Codex** | `~/.codex`（`$CODEX_HOME`） |
-| **Gemini CLI** | `~/.gemini`（`$GEMINI_CLI_HOME`） |
-| **Goose** | `~/.config/goose`（Linux）；`~/Library/Application Support/Goose`（macOS）；`%APPDATA%\Block\goose`（Win） |
-| **opencode** | `~/.opencode.json` |
-| **Qwen Code** | `~/.qwen`（`$QWEN_HOME`） |
-| **Kimi CLI** | `~/.kimi`（`$KIMI_SHARE_DIR`） |
-| **Aider** | 无全局，纯项目本地 `.aider.*` |
+| Agent | Linux / macOS | Windows | 覆盖变量 |
+|-------|--------------|---------|---------|
+| **Claude Code** | `~/.claude` | `%USERPROFILE%\.claude` | `CLAUDE_CONFIG_DIR` |
+| **Codex** | `~/.codex` | `%USERPROFILE%\.codex` | `CODEX_HOME` |
+| **Gemini CLI** | `~/.gemini` | `%USERPROFILE%\.gemini` | `GEMINI_CLI_HOME` |
+| **Grok Build** | `~/.grok` | `%USERPROFILE%\.grok` | `GROK_HOME` |
+| **Command Code** | `~/.commandcode` | `%USERPROFILE%\.commandcode` | — |
+| **Hermes Agent** | `~/.hermes` | `%LOCALAPPDATA%\hermes` | `HERMES_HOME` |
+| **Kilo Code** | `~/.config/kilo` | `%USERPROFILE%\.config\kilo` | `KILO_CONFIG` |
+| **Oh-My-Pi** | `~/.omp` | `%USERPROFILE%\.omp` | `PI_CODING_AGENT_DIR` |
+| **OpenClaw** | `~/.openclaw` | `%USERPROFILE%\.openclaw` | `OPENCLAW_HOME` |
+| **pi** | `~/.pi/agent` | `%USERPROFILE%\.pi\agent` | `PI_CODING_AGENT_DIR` |
+| **Codebuff** | `~/.config/manicode` | `%USERPROFILE%\.config\manicode` | — |
+| **Crush** | `~/.config/crush`, `~/.local/share/crush`, `~/.cache/crush` | `%USERPROFILE%\.config\crush`, `%LOCALAPPDATA%\crush` | `CRUSH_GLOBAL_CONFIG`, `CRUSH_GLOBAL_DATA` |
+| **MiMo Code** | `~/.config/mimocode`, `~/.local/share/mimocode`, `~/.cache/mimocode` | `%USERPROFILE%\.config\mimocode`, `%LOCALAPPDATA%\mimocode` | `MIMOCODE_HOME` |
+| **poolside** | `~/.config/poolside` | `%APPDATA%\poolside` | — |
+| **Peezy CLI** | `~/.peezy` | `%USERPROFILE%\.peezy` | — |
+| **Goose** | `~/.config/goose` | `%APPDATA%\Block\goose` | — |
+| **opencode** | `~/.config/opencode`, `~/.opencode.json` | `%USERPROFILE%\.opencode.json` | — |
+| **Qwen Code** | `~/.qwen` | `%USERPROFILE%\.qwen` | `QWEN_HOME` |
+| **Kimi CLI** | `~/.kimi` | `%USERPROFILE%\.kimi` | `KIMI_SHARE_DIR` |
+| **Genie** | `~/.cosine` | 未公开 | — |
 
 ---
 
@@ -185,7 +236,7 @@ Copy-Item -Recurse ".\backups\20260727_211300\claude-code\.claude" "$env:USERPRO
 
 - `type`：`cli` / `ide` / `extension` / `terminal` / `self-hosted` / `cloud`
 - `cloud_only: true` → 运行器自动跳过
-- `categories`：从 `plugins, rules, skills, subagents, tools, mcps, hooks` 里选，没有就 `[]`
+- `categories`：从 `plugins, rules, skills, subagents, tools, mcps, hooks, memory, sessions` 里选，没有就 `[]`
 - `paths`：三平台全局状态路径，支持 `%VAR%`（Win）、`~`、`$HOME`、`$XDG_*`（Unix）和 `*` 通配符
 - `project_local`：项目级配置文件（相对路径），只有开启 `-IncludeProjectLocal` 才清理
 
@@ -198,6 +249,7 @@ Copy-Item -Recurse ".\backups\20260727_211300\claude-code\.claude" "$env:USERPRO
 3. **Codex Windows 路径**（`%USERPROFILE%\.codex`）来自社区资料而非官方文档，如果 `$CODEX_HOME` 设过就以它为准。
 4. **opencode 已归档**并改名 Crush，路径可能随版本变化。
 5. **Aider** 没有全局状态，只有项目本地 `.aider.*` 文件，需配合 `-IncludeProjectLocal` 使用。
+6. **Qoder / Google Antigravity** 路径部分为推断（VS Code-fork 惯例），未经官方文档直接确认，首次使用前建议在目标机器上核对。
 
 ## License
 
