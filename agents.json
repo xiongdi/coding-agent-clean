@@ -554,14 +554,16 @@
     {
       "id": "qoder",
       "name": "Qoder",
-      "publisher": "Alibaba",
+      "publisher": "Bright Zenith Private Limited",
       "type": "ide",
       "cloud_only": false,
       "categories": [
         "mcps",
-        "plugins"
+        "plugins",
+        "rules",
+        "sessions"
       ],
-      "notes": "VS Code-fork IDE. Has a Knowledge Engine. ⚠️ Official docs (qoder.ai) unreachable, no public GitHub repo. Paths below are INFERRED from VS Code-fork convention — NOT confirmed. Verify on your machine before trusting.",
+      "notes": "VS Code-fork IDE with Knowledge Engine. Config: ~/.qoder/settings.json + project .qoder/. Data: %APPDATA%\\Qoder + %LOCALAPPDATA%\\Qoder (Win), ~/Library/Application Support/Qoder (macOS), ~/.config/Qoder (Linux). Registry: HKCU\\Software\\Qoder (Windows). Auth: QODER_PERSONAL_ACCESS_TOKEN (non-interactive/CI). No QODER_HOME path override.",
       "paths": {
         "windows": [
           "%APPDATA%\\Qoder",
@@ -570,16 +572,28 @@
         ],
         "macos": [
           "~/Library/Application Support/Qoder",
-          "~/Library/Caches/Qoder",
           "~/.qoder"
         ],
         "linux": [
           "~/.config/Qoder",
-          "~/.cache/Qoder",
           "~/.qoder"
         ]
       },
-      "project_local": []
+      "project_local": [
+        {
+          "path": ".qoder/settings.json",
+          "artifacts": [
+            "config",
+            "rules"
+          ]
+        },
+        {
+          "path": ".qoder/settings.local.json",
+          "artifacts": [
+            "config"
+          ]
+        }
+      ]
     },
     {
       "id": "google-antigravity",
@@ -1503,16 +1517,20 @@
         "hooks",
         "rules"
       ],
-      "notes": "Terminal coding agent (frontier Laguna model) + ACP-compatible editor integration. State root ~/.config/poolside/ (settings.yaml, credentials.json). MCP servers stored inline in settings.yaml. Skills via agentskills.io. Auth: credentials.json or POOLSIDE_API_KEY. No POOLSIDE_HOME documented (XDG-style).",
+      "notes": "Terminal coding agent (frontier Laguna model) + ACP-compatible editor integration. Config: ~/.config/poolside/ (settings.yaml, credentials.json) on ALL platforms. State/data: ~/Library/Application Support/poolside (macOS), ~/.local/state + ~/.local/share/poolside (Linux), %LOCALAPPDATA%\\poolside (Windows) — logs/trajectories/sessions. No POOLSIDE_HOME env var.",
       "paths": {
         "windows": [
-          "%APPDATA%\\poolside"
+          "%USERPROFILE%\\.config\\poolside",
+          "%LOCALAPPDATA%\\poolside"
         ],
         "macos": [
+          "~/.config/poolside",
           "~/Library/Application Support/poolside"
         ],
         "linux": [
-          "~/.config/poolside"
+          "~/.config/poolside",
+          "~/.local/state/poolside",
+          "~/.local/share/poolside"
         ]
       },
       "project_local": [
