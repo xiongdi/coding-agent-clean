@@ -12,20 +12,10 @@
 #   ./clean-agents.sh --backup --apply        # backup then wipe
 #   ./clean-agents.sh --agents claude-code,cursor --apply
 #   ./clean-agents.sh --include-project-local --project-roots ~/workspace --apply
-#   ./clean-agents.sh --marketplaces --apply  # only wipe marketplace state (keeps sessions/settings)
 #
-# Options:
-#   --apply                 Actually delete/backup. Without this, only a dry-run is shown.
-#   --backup                Move state to a timestamped backup dir instead of deleting.
-#   --backup-dir <path>     Root dir for backups (default: ./backups/<timestamp>/)
-#   --agents <list>         Comma-separated agent ids (default: all)
-#   --cloud-too             Also list cloud-only agents (skipped by default)
-#   --include-project-local Wipe project-local config (.clinerules, .cursor/rules, ...)
-#   --project-roots <roots> Roots to scan for project-local config (repeatable; default: $PWD)
-#   --json <path>           Path to agents.json (default: same dir as this script)
-#   --marketplaces          Only wipe marketplace state (plugins/marketplaces, plugin-catalog-cache,
-#                           known_marketplaces.json, cache/). Keeps sessions, settings, auth. Useful for
-#                           resetting the official marketplace without nuking the whole ~/.claude tree.
+# NOTE: a --marketplaces flag is NOT implemented. Deleting ~/.claude works once,
+# but Claude Code auto-reinstalls the official marketplace on next startup
+# (officialMarketplaceAutoInstalled). See agents.json claude-code notes.
 
 set -euo pipefail
 
