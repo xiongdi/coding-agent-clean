@@ -1,6 +1,6 @@
 {
   "$schema": "coding-agent-clean/agents.json",
-  "description": "Single source of truth for the coding-agent-clean script. Lists every coding agent's local state paths per platform and which artifact categories (plugins, rules, skills, subagents, tools, mcps, hooks) it stores. Cloud-only agents are marked cloud_only and are skipped by the runner.",
+  "description": "Single source of truth for the coding-agent-clean script. Covers coding agents ranked by OpenRouter CLI Agents (https://openrouter.ai/apps/category/coding/cli-agent) and lists every agent's local state paths per platform and which artifact categories (plugins, rules, skills, subagents, tools, mcps, hooks) it stores. Cloud-only agents are marked cloud_only and are skipped by the runner.",
   "artifact_categories": [
     "plugins",
     "rules",
@@ -1755,6 +1755,69 @@
           ]
         }
       ]
+    },
+    {
+      "id": "slate-agent",
+      "name": "Slate Agent",
+      "publisher": "Random Labs",
+      "type": "cli",
+      "cloud_only": false,
+      "categories": ["skills", "subagents", "tools", "mcps", "sessions"],
+      "notes": "Swarm-native coding CLI (OpenRouter CLI Agents). Install: `npm i -g @randomlabs/slate` (also curl/brew/pnpm/bun via `slate upgrade`). User config: ~/.config/slate/slate.json (override SLATE_CONFIG_DIR / SLATE_CONFIG). Global skills: ~/.slate/skills/. Project slate.json / slate.jsonc discovered up to git root; project skills in .slate/skills/. Supports MCP, sessions (--continue/--resume), parallel subagents. Official docs: Windows may not work — use WSL; native Windows paths left empty. Sources: https://docs.randomlabs.ai/en/using-slate/configuration.md , https://docs.randomlabs.ai/en/using-slate/skills.md , https://docs.randomlabs.ai/en/getting-started/quickstart.md",
+      "paths": {
+        "windows": [],
+        "macos": ["~/.config/slate", "~/.slate"],
+        "linux": ["~/.config/slate", "~/.slate"]
+      },
+      "project_local": [
+        {"path": "slate.json", "artifacts": ["mcps", "skills"]},
+        {"path": "slate.jsonc", "artifacts": ["mcps", "skills"]},
+        {"path": ".slate/skills", "artifacts": ["skills"]}
+      ]
+    },
+    {
+      "id": "junie",
+      "name": "Junie",
+      "publisher": "JetBrains",
+      "type": "cli",
+      "cloud_only": false,
+      "categories": ["rules", "skills", "subagents", "tools", "mcps", "hooks", "memory"],
+      "notes": "JetBrains coding agent CLI + IDE plugin (OpenRouter CLI Agents). Install: `curl -fsSL https://junie.jetbrains.com/install.sh | bash` (shim ~/.local/bin/junie; data/versions ~/.local/share/junie, override JUNIE_DATA_DIR). User state ~/.junie (config.json, settings.json, mcp/, skills/, agents/, models/, trust/, logs/). Project .junie/ for config, AGENTS.md guidelines, MCP, skills, subagents, memory. Also JetBrains Marketplace plugin. Sources: https://github.com/JetBrains/junie , https://junie.jetbrains.com/docs/junie-cli-configuration.html , https://junie.jetbrains.com/docs/junie-ide-plugin.html",
+      "paths": {
+        "windows": ["%USERPROFILE%\\.junie", "%USERPROFILE%\\.local\\share\\junie"],
+        "macos": ["~/.junie", "~/.local/share/junie"],
+        "linux": ["~/.junie", "~/.local/share/junie"]
+      },
+      "project_local": [
+        {"path": ".junie", "artifacts": ["rules", "skills", "subagents", "mcps", "memory"]},
+        {"path": "AGENTS.md", "artifacts": ["rules"]}
+      ]
+    },
+    {
+      "id": "hermes-studio",
+      "name": "Hermes Studio",
+      "publisher": "EKKOLearnAI",
+      "type": "self-hosted",
+      "cloud_only": false,
+      "categories": ["plugins", "skills", "tools", "mcps", "memory", "sessions"],
+      "notes": "Desktop app + local Web UI/control plane for Hermes Agent (listed on OpenRouter as Hermes Web UI / hermes-studio.ai). Install: desktop releases or `npm install -g hermes-web-ui`. Own state root ~/.hermes-web-ui (auth token, credentials, logs, SQLite DB, uploads); override HERMES_WEB_UI_HOME or HERMES_WEBUI_STATE_DIR. Does NOT own Hermes Agent data (~/.hermes) — that remains hermes-agent. Can write channel settings into Hermes home when managing profiles. Sources: https://www.npmjs.com/package/hermes-web-ui , https://github.com/EKKOLearnAI/hermes-studio , https://hermes-studio.ai/",
+      "paths": {
+        "windows": ["%USERPROFILE%\\.hermes-web-ui"],
+        "macos": ["~/.hermes-web-ui"],
+        "linux": ["~/.hermes-web-ui"]
+      },
+      "project_local": []
+    },
+    {
+      "id": "clark",
+      "name": "Clark - Personal Agent",
+      "publisher": "Clark (clarkchat.com)",
+      "type": "cloud",
+      "cloud_only": true,
+      "categories": [],
+      "notes": "Listed on OpenRouter CLI Agents / Personal Agents. Cloud workspace at clarkchat.com for browser/files/code/schedules/artifacts. No authoritative public local state paths documented — skipped by runner. Sources: https://openrouter.ai/apps/clark , https://www.clarkchat.com/",
+      "paths": {"windows": [], "macos": [], "linux": []},
+      "project_local": []
     }
   ]
 }

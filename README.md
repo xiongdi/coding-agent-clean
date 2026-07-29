@@ -1,6 +1,6 @@
 # coding-agent-clean
 
-> 把主流榜单（[artificialanalysis.ai/agents/coding](https://artificialanalysis.ai/agents/coding)、[OpenRouter 编码应用榜](https://openrouter.ai/apps/category/coding)）列出的 coding agent 清理得像刚安装一样——
+> 把主流榜单（[artificialanalysis.ai/agents/coding](https://artificialanalysis.ai/agents/coding)、[OpenRouter 编码应用榜](https://openrouter.ai/apps/category/coding)、[OpenRouter CLI Agents](https://openrouter.ai/apps/category/coding/cli-agent)）列出的 coding agent 清理得像刚安装一样——
 > 抹掉 **plugins · rules · skills · subagents · tools · MCPs · hooks · memory** 以及所有配置 / 缓存 / 认证 / 状态，保留二进制本体。
 
 **每个条目均经官方文档 / GitHub 源码 / 包注册表验证**（2026-07）。明确排除游戏引擎、通用代理框架、云 SaaS、API 网关等非编码代理。
@@ -75,7 +75,7 @@ coding-agent-clean/
 | **`-Backup` / `--backup`** | 删除前把状态移到 `backups/<时间戳>/`，可恢复 |
 | **只清状态，不动本体** | `agents.json` 里列的都是 state 路径；安装目录（`/Applications/Cursor.app`、`%LOCALAPPDATA%\Programs\...` 等）**不会被碰** |
 | **项目本地默认关闭** | `.cursor/rules`、`.clinerules` 这类项目级配置常被 git 跟踪/团队共用，必须显式加 `-IncludeProjectLocal` 才会清理 |
-| **云-only 自动跳过** | Jules 没有本地状态，默认跳过（可用 `--cloud-too` 显示） |
+| **云-only 自动跳过** | Jules、Clark 没有本地状态，默认跳过（可用 `--cloud-too` 显示） |
 | **支持 `-WhatIf` / `-Confirm`** | PowerShell 原生支持 `-WhatIf` 和 `-Confirm` |
 
 ### 恢复备份
@@ -89,7 +89,7 @@ Copy-Item -Recurse ".\backups\20260727_211300\claude-code\.claude" "$env:USERPRO
 
 ---
 
-## 支持的 Agent（42 个）
+## 支持的 Agent（46 个）
 
 经全量审计（每个条目对照官方源码/文档）。**categories** 列出该 agent 实际拥有的 artifact 类别（plugins / rules / skills / subagents / tools / mcps / hooks / memory / sessions）。
 
@@ -104,6 +104,8 @@ Copy-Item -Recurse ".\backups\20260727_211300\claude-code\.claude" "$env:USERPRO
 | **OpenClaw** | plugins, skills, subagents, tools, mcps, memory | `~/.openclaw` | 多渠道网关+代理框架；`OPENCLAW_HOME` |
 | **Hermes Agent** | skills, subagents, tools, memory, mcps | `~/.hermes` | Nous Research；Windows: `%LOCALAPPDATA%\hermes`；`HERMES_HOME` |
 | **Kilo Code** | skills, subagents, tools, mcps, rules | `~/.config/kilo` | OpenCode/Roo Code fork；`KILO_CONFIG_DIR` |
+| **Slate Agent** | skills, subagents, tools, mcps, sessions | `~/.config/slate`, `~/.slate` | Random Labs swarm-native CLI；`SLATE_CONFIG_DIR` / `SLATE_CONFIG` |
+| **Junie** | rules, skills, subagents, tools, mcps, hooks, memory | `~/.junie`, `~/.local/share/junie` | JetBrains CLI + IDE plugin；`JUNIE_DATA_DIR` |
 | **Oh-My-Pi** | plugins, rules, skills, subagents, tools, mcps, memory | `~/.omp` | omp.sh 终端代理（pi fork） |
 | **Goose** | tools, subagents, mcps, skills, memory | `~/.config/goose` | AAIF/Linux Foundation；`GOOSE_PATH_ROOT` |
 | **Mistral Vibe** | skills, subagents, tools, mcps, hooks | `~/.vibe` | Mistral AI；binary `vibe`；`VIBE_HOME` |
@@ -157,10 +159,11 @@ Copy-Item -Recurse ".\backups\20260727_211300\claude-code\.claude" "$env:USERPRO
 | Agent | categories | 说明 |
 |-------|-----------|------|
 | **OpenHands** | plugins, rules, skills, subagents, tools, mcps, hooks, memory | `~/.openhands`；binary `agent-canvas` |
+| **Hermes Studio** | plugins, skills, tools, mcps, memory, sessions | `~/.hermes-web-ui` | Hermes Agent 的本地 Web UI/control plane；不清理 `~/.hermes` |
 
 ### 云-only（自动跳过）
 
-**Jules**（Google）— 在 Cloud VM 中运行，无本地状态。
+**Jules**（Google）— 在 Cloud VM 中运行，无本地状态。**Clark - Personal Agent**（Clark）— 云工作区，无公开本地状态路径。
 
 ---
 
@@ -177,6 +180,8 @@ Copy-Item -Recurse ".\backups\20260727_211300\claude-code\.claude" "$env:USERPRO
 | Goose | `~/.config/goose` | `~/Library/Application Support/Block/goose` | `%APPDATA%\Block\goose` | `GOOSE_PATH_ROOT` |
 | Mistral Vibe | `~/.vibe` | `~/.vibe` | `%USERPROFILE%\.vibe` | `VIBE_HOME` |
 | Kilo Code | `~/.config/kilo` | `~/Library/Application Support/kilo` | `%LOCALAPPDATA%\kilo` | `KILO_CONFIG_DIR` |
+| Slate Agent | `~/.config/slate` + `~/.slate` | 同左 | —（Windows 请用 WSL） | `SLATE_CONFIG_DIR`, `SLATE_CONFIG` |
+| Junie | `~/.junie` + `~/.local/share/junie` | 同左 | `%USERPROFILE%\.junie` + `%USERPROFILE%\.local\share\junie` | `JUNIE_DATA_DIR` |
 | Command Code | `~/.commandcode` | `~/.commandcode` | `%USERPROFILE%\.commandcode` | — |
 | Hermes Agent | `~/.hermes` | `~/.hermes` | `%LOCALAPPDATA%\hermes` | `HERMES_HOME` |
 | OpenClaw | `~/.openclaw` | `~/.openclaw` | `%USERPROFILE%\.openclaw` | `OPENCLAW_HOME` |
@@ -191,6 +196,12 @@ Copy-Item -Recurse ".\backups\20260727_211300\claude-code\.claude" "$env:USERPRO
 | Qwen Code | `~/.qwen` | `~/.qwen` | `%USERPROFILE%\.qwen` | `QWEN_HOME` |
 | Kimi CLI | `~/.kimi` | `~/.kimi` | `%USERPROFILE%\.kimi` | `KIMI_SHARE_DIR` |
 | Genie | `~/.cosine` | `~/.cosine` | `%USERPROFILE%\.cosine` | — |
+
+### 自托管
+
+| Agent | Linux | macOS | Windows | 覆盖变量 |
+|-------|-------|-------|---------|---------|
+| Hermes Studio | `~/.hermes-web-ui` | `~/.hermes-web-ui` | `%USERPROFILE%\.hermes-web-ui` | `HERMES_WEB_UI_HOME`, `HERMES_WEBUI_STATE_DIR` |
 
 ### 独立 IDE
 
@@ -257,6 +268,7 @@ Copy-Item -Recurse ".\backups\20260727_211300\claude-code\.claude" "$env:USERPRO
 5. **Aider** 没有全局状态目录，只有 `~/.aider/` 存 OAuth keys，需配合 `-IncludeProjectLocal` 清项目 `.aider.*`。
 6. **部分路径为推断**：Google Antigravity（网站无技术文档）、Genie（repo 404 / 域名已出售，标记 UNVERIFIED）、Qoder（部分路径来自社区 reset 工具）、poolside（state 路径未公开）。这些在 `agents.json` 的 notes 中均有标注。
 7. **Zed 用 "extensions" 不用 "plugins"** — 分类术语以官方为准。
+8. **Citadel Intelligence Agents**（OpenRouter）仅面向内部（`ife.citadel.internal`），因此未收录；**Clark** 为云-only，且没有公开文档可验证的本地状态路径。
 
 ## License
 
