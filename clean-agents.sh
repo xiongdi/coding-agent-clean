@@ -28,7 +28,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 JSON_PATH="$SCRIPT_DIR/agents.json"
 
 # --- parse args ---
-declare -A WANTED=()
+# Space-delimited wanted ids (bash 3.2 has no associative arrays).
+WANTED_LIST=""
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --apply) APPLY=1 ;;
@@ -36,7 +37,10 @@ while [[ $# -gt 0 ]]; do
         --backup-dir) BACKUP_DIR="$2"; shift ;;
         --agents)
             IFS=',' read -ra _tmp <<< "$2"
-            for a in "${_tmp[@]}"; do WANTED["$(echo "$a" | xargs)"]=1; done
+            for a in "${_tmp[@]}"; do
+                a="$(echo "$a" | xargs)"
+                [[ -n "$a" ]] && WANTED_LIST="$WANTED_LIST $a"
+            done
             shift ;;
         --cloud-too) CLOUD_TOO=1 ;;
         --include-project-local) INCLUDE_PROJECT_LOCAL=1 ;;
@@ -54,6 +58,16 @@ while [[ $# -gt 0 ]]; do
     esac
     shift
 done
+
+# Return 0 if id is in WANTED_LIST (or list is empty = all agents).
+is_wanted() {
+    local id="$1"
+    [[ -z "$WANTED_LIST" ]] && return 0
+    case " $WANTED_LIST " in
+        *" $id "*) return 0 ;;
+        *) return 1 ;;
+    esac
+}
 
 [[ ${#PROJECT_ROOTS[@]} -eq 0 ]] && PROJECT_ROOTS=("$PWD")
 
@@ -180,7 +194,7 @@ GRAND_REMOVED=0
 
 while IFS=$'\t' read -r id name is_cloud notes cats paths_json project_local_json; do
     # filter by --agents
-    if [[ ${#WANTED[@]} -gt 0 && -z "${WANTED[$id]+x}" ]]; then continue; fi
+    is_wanted "$id" || continue
 
     if [[ "$is_cloud" == "true" ]]; then
         if [[ $CLOUD_TOO -eq 1 ]]; then
@@ -215,9 +229,13 @@ while IFS=$'\t' read -r id name is_cloud notes cats paths_json project_local_jso
         done < <(echo "$project_local_json" | jq -r '.[]')
     fi
 
-    # de-duplicate
+    # de-duplicate (readarray is bash 4+; use a portable loop)
     if [[ ${#found_paths[@]} -gt 0 ]]; then
-        readarray -t found_paths < <(printf '%s\n' "${found_paths[@]}" | sort -u)
+        _deduped=()
+        while IFS= read -r _line; do
+            [[ -n "$_line" ]] && _deduped+=("$_line")
+        done < <(printf '%s\n' "${found_paths[@]}" | sort -u)
+        found_paths=("${_deduped[@]}")
     fi
 
     if [[ ${#found_paths[@]} -eq 0 ]]; then
@@ -256,8 +274,8 @@ echo '========================================='
 printf '%-22s %-16s %s\n' AGENT ID STATUS
 printf '%-22s %-16s %s\n' '----' '--' '------'
 for s in "${SUMMARY[@]}"; do
-    IFS=$'\t' read -r nm st <<< "$s"
-    printf '%-22s %-16s %s\n' "$nm" "$st"
+    IFS=$'\t' read -r nm aid st <<< "$s"
+    printf '%-22s %-16s %s\n' "$nm" "$aid" "$st"
 done
 echo
 if [[ $APPLY -eq 0 ]]; then
